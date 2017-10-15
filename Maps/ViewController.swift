@@ -17,8 +17,8 @@ class ViewController: UIViewController, MKMapViewDelegate {
         super.viewDidLoad()
 
         //Default location
-        let latitude: CLLocationDegrees = 37.35
-        let longitude: CLLocationDegrees = -121.95
+        let latitude: CLLocationDegrees = 37.37
+        let longitude: CLLocationDegrees = -121.91
 
         //Zoom level
         let latDelta: CLLocationDegrees = 0.05
@@ -26,11 +26,37 @@ class ViewController: UIViewController, MKMapViewDelegate {
         
         //Span-Coordinate-Region
         let span: MKCoordinateSpan = MKCoordinateSpan(latitudeDelta: latDelta, longitudeDelta: lonDelta)
-        let coordinate: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-        let region: MKCoordinateRegion = MKCoordinateRegion(center: coordinate, span: span)
+        let coordinates: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+        let region: MKCoordinateRegion = MKCoordinateRegion(center: coordinates, span: span)
         
         //Set Map
         mapView.setRegion(region, animated: true)
+        
+        //Annotation using default location above
+        let annotation = MKPointAnnotation()
+        annotation.title = "Coding Dojo Silicon Valley"
+        annotation.subtitle = "Nice place to learn"
+        annotation.coordinate = coordinates
+        mapView.addAnnotation(annotation)
+        
+        //Annotation by long press an area on map
+        let theLongPress = UILongPressGestureRecognizer(target: self, action: #selector(ViewController.longPress(gestureRecognizer:)))
+        theLongPress.minimumPressDuration = 2
+        mapView.addGestureRecognizer(theLongPress)
+    }
+    
+    //Function
+    @objc func longPress(gestureRecognizer: UIGestureRecognizer) {
+        //Determine where the touch point is and convert that point to coordinate on the map
+        let touchPoint = gestureRecognizer.location(in: self.mapView)
+        let coordinate = mapView.convert(touchPoint, toCoordinateFrom: self.mapView)
+        
+        //Set Annotation with touch point coordinate
+        let annotation = MKPointAnnotation()
+        annotation.title = "New Place Title"
+        annotation.subtitle = "New Place Subtitle"
+        annotation.coordinate = coordinate
+        mapView.addAnnotation(annotation)
     }
     
 
